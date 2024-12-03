@@ -64,7 +64,7 @@ Testy zostały napisane w oparciu o NUnit i można je uruchomić za pomocą Visu
 - [x] **3. Rozszerzenie funkcjonalności zarządzania lotami**
   - **Cel kroku:** Dodanie możliwości aktualizacji, usuwania lotów oraz bardziej zaawansowanego wyszukiwania lotów w systemie.
 
-- [ ] **4. Przygotowanie kodu umożliwiającego łatwą integrację z API lub bazą danych**
+- [x] **4. Przygotowanie kodu umożliwiającego łatwą integrację z API lub bazą danych**
   - **Cel kroku:** Zapewnienie spójnej struktury i interfejsów, które ułatwią dodanie infrastruktury w przyszłości.
 
 - [ ] **5. Rozbudowa modelu domenowego o walidację danych wejściowych**
