@@ -1,27 +1,23 @@
-﻿using System;
+﻿using FlightBooking.Domain.Models;
 
 namespace FlightBooking.Domain.Services
 {
     public class DiscountService
     {
-        private const decimal MinPrice = 20m;
-        private const decimal DiscountAmount = 5m;
+        private readonly DiscountManager _discountManager;
 
-        public decimal CalculateDiscountedPrice(decimal basePrice, DateTime flightDate, DateTime? buyerBirthDate, bool isToAfricaOnThursday)
+        public DiscountService(DiscountManager discountManager)
         {
-            decimal discountedPrice = basePrice;
+            _discountManager = discountManager;
+        }
 
-            if (buyerBirthDate.HasValue && buyerBirthDate.Value.Date == flightDate.Date)
-            {
-                discountedPrice -= DiscountAmount;
-            }
+        public decimal CalculateDiscountedPrice(decimal basePrice, Flight flight, DateTime purchaseDate, DateTime? buyerBirthDate)
+        {
+            decimal totalDiscount = _discountManager.ApplyDiscounts(flight, purchaseDate, buyerBirthDate);
 
-            if (isToAfricaOnThursday)
-            {
-                discountedPrice -= DiscountAmount;
-            }
+            decimal discountedPrice = basePrice - totalDiscount;
 
-            return discountedPrice < MinPrice ? MinPrice : discountedPrice;
+            return discountedPrice < 20m ? 20m : discountedPrice;
         }
     }
 }

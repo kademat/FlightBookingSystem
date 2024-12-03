@@ -60,7 +60,7 @@ Cel kroku:
 
 Zaprezentowanie struktury projektu, pierwszego pomysłu na realizację zadania, przygotowanie do dalszego rozwoju.
 
-- [ ] Dodanie nowych kryteriów zniżek poprzez implementację interfejsu IDiscountCriteria.
+- [x] Dodanie nowych kryteriów zniżek poprzez implementację interfejsu IDiscountCriteria.
 
 Cel kroku:
 
