@@ -66,7 +66,7 @@ Cel kroku:
 
 Rozszerzenie logiki biznesowej poprzez umożliwienie łatwego dodawania kolejnych reguł zniżek zgodnie z zasadą Open/Closed.
 
-- [ ] Rozszerzenie funkcjonalności zarządzania lotami.
+- [x] Rozszerzenie funkcjonalności zarządzania lotami.
 
 Cel kroku:
 

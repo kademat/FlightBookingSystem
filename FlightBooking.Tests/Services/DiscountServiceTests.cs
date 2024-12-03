@@ -1,4 +1,4 @@
-﻿using FlightBooking.Domain.Domain;
+﻿using FlightBooking.Domain.Interfaces;
 using FlightBooking.Domain.Models;
 using FlightBooking.Domain.Services;
 using Moq;

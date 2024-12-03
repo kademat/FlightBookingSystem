@@ -1,6 +1,6 @@
 ﻿using FlightBooking.Domain.Models;
 
-namespace FlightBooking.Domain.Domain;
+namespace FlightBooking.Domain.Interfaces;
 
 public interface IDiscountCriteria
 {
