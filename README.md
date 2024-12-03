@@ -32,8 +32,8 @@ Aby uruchomić projekt, wymagane są:
 
 ## Uruchomienie lokalne
 1. **Sklonuj repozytorium**:
-   ```bash
-   git clone https://github.com/kademat/FlightBookingSystem.git```
+```bash
+git clone https://github.com/kademat/FlightBookingSystem.git
 2. **Otwórz projekt w Visual Studio.**
 3. **Zbuduj projekt (Build > Build Solution).**
 4. **Uruchom testy jednostkowe:**
@@ -53,35 +53,35 @@ Testy zostały napisane w oparciu o NUnit i można je uruchomić za pomocą Visu
 ---
 
 ## Plan rozwoju
-[x] Implementacja podstawowego modelu domenowego wraz z podstawowymi testami jednostkowymi.
+- [x] Implementacja podstawowego modelu domenowego wraz z podstawowymi testami jednostkowymi.
 Cel kroku:
 Zaprezentowanie struktury projektu, pierwszego pomysłu na realizację zadania, przygotowanie do dalszego rozwoju.
 
-[] Dodanie nowych kryteriów zniżek poprzez implementację interfejsu IDiscountCriteria.
+- [] Dodanie nowych kryteriów zniżek poprzez implementację interfejsu IDiscountCriteria.
 Cel kroku:
 Rozszerzenie logiki biznesowej poprzez umożliwienie łatwego dodawania kolejnych reguł zniżek zgodnie z zasadą Open/Closed.
 
-[] Rozszerzenie funkcjonalności zarządzania lotami.
+- [] Rozszerzenie funkcjonalności zarządzania lotami.
 Cel kroku:
 Dodanie możliwości aktualizacji, usuwania lotów oraz bardziej zaawansowanego wyszukiwania lotów w systemie.
 
-[] Przygotowanie kodu umożliwiającego łatwą integrację z API lub bazą danych.
+- [] Przygotowanie kodu umożliwiającego łatwą integrację z API lub bazą danych.
 Cel kroku:
 Zapewnienie spójnej struktury i interfejsów, które ułatwią dodanie infrastruktury w przyszłości.
 
-[] Rozbudowa modelu domenowego o walidację danych wejściowych.
+- [] Rozbudowa modelu domenowego o walidację danych wejściowych.
 Cel kroku:
 Wprowadzenie walidacji na poziomie domeny, np. poprawności ID lotu, dat i godzin.
 
-[] Implementacja mechanizmu logowania dla kryteriów zniżek (dla tenantów grupy A).
+- [] Implementacja mechanizmu logowania dla kryteriów zniżek (dla tenantów grupy A).
 Cel kroku:
 Wprowadzenie rejestracji zastosowanych kryteriów zniżek z opcją łatwego rozszerzenia logiki dla przyszłych wymagań.
 
-[] Usprawnienie zarządzania cenami lotów.
+- [] Usprawnienie zarządzania cenami lotów.
 Cel kroku:
 Wprowadzenie dynamicznych reguł ustalania cen, np. na podstawie popularności lotu, sezonowości lub innych czynników.
 
-[] Optymalizacja systemu pod kątem wydajności.
+- [] Optymalizacja systemu pod kątem wydajności.
 Cel kroku:
 Analiza i eliminacja potencjalnych wąskich gardeł w logice biznesowej, np. przetwarzania dużych zbiorów lotów i zniżek.
 
@@ -119,7 +119,8 @@ Zaimplementuj logikę metody IsApplicable oraz GetDiscountAmount.
 Zarejestruj nowe kryterium w odpowiedniej klasie (np. DiscountService).
 Przykład nowego kryterium:
 
-```public class WeekendDiscount : IDiscountCriteria
+```csharp
+public class WeekendDiscount : IDiscountCriteria
 {
     public bool IsApplicable(Flight flight, DateTime purchaseDate, DateTime? buyerBirthDate)
     {
@@ -127,4 +128,4 @@ Przykład nowego kryterium:
     }
 
     public decimal GetDiscountAmount() => 5m;
-}```
+}
