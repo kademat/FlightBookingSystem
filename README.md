@@ -34,6 +34,7 @@ Aby uruchomić projekt, wymagane są:
 1. **Sklonuj repozytorium**:
 ```bash
 git clone https://github.com/kademat/FlightBookingSystem.git
+```
 2. **Otwórz projekt w Visual Studio.**
 3. **Zbuduj projekt (Build > Build Solution).**
 4. **Uruchom testy jednostkowe:**
@@ -129,3 +130,4 @@ public class WeekendDiscount : IDiscountCriteria
 
     public decimal GetDiscountAmount() => 5m;
 }
+```
