@@ -5,12 +5,12 @@ using Moq;
 public class FlightManagementServiceTests
 {
     private FlightManagementService _flightManagementService;
-    private FlightRepository _flightRepository;
+    private IFlightRepository _flightRepository;
 
     [SetUp]
     public void SetUp()
     {
-        _flightRepository = new FlightRepository();
+        _flightRepository = new InMemoryFlightRepository();
         _flightManagementService = new FlightManagementService(_flightRepository);
     }
 
@@ -92,5 +92,15 @@ public class FlightManagementServiceTests
 
         // Assert
         mockRepository.Verify(repo => repo.AddFlight(It.IsAny<Flight>()), Times.Once);
+    }
+
+    private Flight CreateFlight(string flightId, string from, string to, DayOfWeek dayOfWeek)
+    {
+        var flightDate = DateTime.Today;
+        while (flightDate.DayOfWeek != dayOfWeek)
+        {
+            flightDate = flightDate.AddDays(1);
+        }
+        return new Flight(flightId, from, to, flightDate, new[] { dayOfWeek });
     }
 }

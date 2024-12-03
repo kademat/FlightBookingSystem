@@ -8,7 +8,7 @@ namespace FlightBooking.Tests.Services
     [TestFixture]
     public class DiscountServiceTests
     {
-        private DiscountService _discountService;
+        private DiscountService? _discountService;
         private DiscountManager _discountManager;
 
         [SetUp]
