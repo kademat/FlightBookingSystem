@@ -17,25 +17,25 @@ public class FlightManagementServiceTests
     [Test]
     public void Should_Add_Flight()
     {
-        var flight = new Flight("TEST123", "NYC", "LAX", DateTime.Today, new[] { DayOfWeek.Monday });
+        var flight = new Flight("KLM12345BCA", "NYC", "LAX", DateTime.Today, DateTime.Today.AddDays(1), DateTime.Today, new[] { DayOfWeek.Monday }, 5, 120);
         _flightManagementService.AddFlight(flight);
 
-        var retrievedFlight = _flightManagementService.GetFlightById("TEST123");
+        var retrievedFlight = _flightManagementService.GetFlightById("KLM12345BCA");
 
         Assert.IsNotNull(retrievedFlight);
-        Assert.That(retrievedFlight.FlightId, Is.EqualTo("TEST123"));
+        Assert.That(retrievedFlight.FlightId, Is.EqualTo("KLM12345BCA"));
     }
 
     [Test]
     public void Should_Update_Flight()
     {
-        var flight = new Flight("TEST123", "NYC", "LAX", DateTime.Today, new[] { DayOfWeek.Monday });
+        var flight = new Flight("KLM12345BCA", "NYC", "LAX", DateTime.Today, DateTime.Today.AddDays(1), DateTime.Today, new[] { DayOfWeek.Monday }, 5, 120);
         _flightManagementService.AddFlight(flight);
 
-        var updatedFlight = new Flight("TEST123", "NYC", "SFO", DateTime.Today.AddDays(1), new[] { DayOfWeek.Tuesday });
-        _flightManagementService.UpdateFlight("TEST123", updatedFlight);
+        var updatedFlight = new Flight("KLM12345BCA", "NYC", "SFO", DateTime.Today, DateTime.Today.AddDays(1), DateTime.Today, new[] { DayOfWeek.Monday }, 5, 120);
+        _flightManagementService.UpdateFlight("KLM12345BCA", updatedFlight);
 
-        var retrievedFlight = _flightManagementService.GetFlightById("TEST123");
+        var retrievedFlight = _flightManagementService.GetFlightById("KLM12345BCA");
 
         Assert.IsNotNull(retrievedFlight);
         Assert.That(retrievedFlight.To, Is.EqualTo("SFO"));
@@ -44,12 +44,12 @@ public class FlightManagementServiceTests
     [Test]
     public void Should_Remove_Flight()
     {
-        var flight = new Flight("TEST123", "NYC", "LAX", DateTime.Today, new[] { DayOfWeek.Monday });
+        var flight = new Flight("KLM12345BCA", "NYC", "LAX", DateTime.Today, DateTime.Today.AddDays(1), DateTime.Today, new[] { DayOfWeek.Monday }, 5, 120);
         _flightManagementService.AddFlight(flight);
 
-        _flightManagementService.RemoveFlight("TEST123");
+        _flightManagementService.RemoveFlight("KLM12345BCA");
 
-        var retrievedFlight = _flightManagementService.GetFlightById("TEST123");
+        var retrievedFlight = _flightManagementService.GetFlightById("KLM12345BCA");
 
         Assert.IsNull(retrievedFlight);
     }
@@ -66,8 +66,8 @@ public class FlightManagementServiceTests
 
         var tuesdayFlightDate = mondayFlightDate.AddDays(1);
 
-        var flight1 = new Flight("TEST001", "NYC", "LAX", mondayFlightDate, new[] { DayOfWeek.Monday });
-        var flight2 = new Flight("TEST002", "LAX", "NYC", tuesdayFlightDate, new[] { DayOfWeek.Tuesday });
+        var flight1 = new Flight("KLM12345BCA", "NYC", "LAX", DateTime.Today, DateTime.Today.AddDays(1), DateTime.Today, new[] { DayOfWeek.Monday }, 5, 120);
+        var flight2 = new Flight("KLM12346BCA", "NYC", "NYC", DateTime.Today, DateTime.Today.AddDays(1), DateTime.Today, new[] { DayOfWeek.Tuesday }, 5, 120);
         _flightManagementService.AddFlight(flight1);
         _flightManagementService.AddFlight(flight2);
 
@@ -76,7 +76,7 @@ public class FlightManagementServiceTests
 
         // Assert
         Assert.That(results.Count(), Is.EqualTo(1));
-        Assert.That(results.First().FlightId, Is.EqualTo("TEST001"));
+        Assert.That(results.First().FlightId, Is.EqualTo("KLM12345BCA"));
     }
 
     [Test]
@@ -85,22 +85,12 @@ public class FlightManagementServiceTests
         // Arrange
         var mockRepository = new Mock<IFlightRepository>();
         var flightManagementService = new FlightManagementService(mockRepository.Object);
-        var flight = new Flight("TEST123", "NYC", "LAX", DateTime.Today, new[] { DayOfWeek.Monday });
+        var flight = new Flight("KLM12345BCA", "NYC", "LAX", DateTime.Today, DateTime.Today.AddDays(1), DateTime.Today, new[] { DayOfWeek.Monday }, 5, 120);
 
         // Act
         flightManagementService.AddFlight(flight);
 
         // Assert
         mockRepository.Verify(repo => repo.AddFlight(It.IsAny<Flight>()), Times.Once);
-    }
-
-    private Flight CreateFlight(string flightId, string from, string to, DayOfWeek dayOfWeek)
-    {
-        var flightDate = DateTime.Today;
-        while (flightDate.DayOfWeek != dayOfWeek)
-        {
-            flightDate = flightDate.AddDays(1);
-        }
-        return new Flight(flightId, from, to, flightDate, new[] { dayOfWeek });
     }
 }

@@ -26,6 +26,7 @@ public class InMemoryFlightRepository : IFlightRepository
 
     public IEnumerable<Flight> SearchFlights(string? from, string? to, DateTime? departureDate, DayOfWeek[]? daysOfWeek)
     {
+        // to fix after adding more criteria
         return _flights.Where(f =>
             (string.IsNullOrEmpty(from) || f.From == from) &&
             (string.IsNullOrEmpty(to) || f.To == to) &&

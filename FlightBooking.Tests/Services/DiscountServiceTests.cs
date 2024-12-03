@@ -33,7 +33,7 @@ namespace FlightBooking.Tests.Services
             var discountService = new DiscountService(discountManager);
 
             var basePrice = 30m;
-            var flight = new Flight("TEST123", "POL", "AFR", DateTime.Today, new[] { DayOfWeek.Thursday });
+            var flight = new Flight("KLM12345BCA", "POL", "AFR", DateTime.Today, DateTime.Today.AddDays(1), DateTime.Today, new[] { DayOfWeek.Thursday }, 5, 120);
 
             // Act
             var finalPrice = discountService.CalculateDiscountedPrice(basePrice, flight, DateTime.Today, null);
@@ -57,7 +57,7 @@ namespace FlightBooking.Tests.Services
             var discountService = new DiscountService(discountManager);
 
             var flightDate = GetNextThursday(DateTime.Today);
-            var flight = new Flight("TEST123", "POL", isAfricaOnThursday ? "AFR" : "EU", flightDate, new[] { DayOfWeek.Thursday });
+            var flight = new Flight("KLM12345BCA", "POL", "AFR", flightDate, flightDate.AddDays(1), flightDate, new[] { DayOfWeek.Thursday }, 5, 120);
 
             // Act
             var finalPrice = discountService.CalculateDiscountedPrice(basePrice, flight, flightDate, flightDate);
