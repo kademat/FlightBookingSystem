@@ -55,35 +55,51 @@ Testy zostały napisane w oparciu o NUnit i można je uruchomić za pomocą Visu
 
 ## Plan rozwoju
 - [x] Implementacja podstawowego modelu domenowego wraz z podstawowymi testami jednostkowymi.
+
 Cel kroku:
+
 Zaprezentowanie struktury projektu, pierwszego pomysłu na realizację zadania, przygotowanie do dalszego rozwoju.
 
 - [ ] Dodanie nowych kryteriów zniżek poprzez implementację interfejsu IDiscountCriteria.
+
 Cel kroku:
+
 Rozszerzenie logiki biznesowej poprzez umożliwienie łatwego dodawania kolejnych reguł zniżek zgodnie z zasadą Open/Closed.
 
 - [ ] Rozszerzenie funkcjonalności zarządzania lotami.
+
 Cel kroku:
+
 Dodanie możliwości aktualizacji, usuwania lotów oraz bardziej zaawansowanego wyszukiwania lotów w systemie.
 
 - [ ] Przygotowanie kodu umożliwiającego łatwą integrację z API lub bazą danych.
+
 Cel kroku:
+
 Zapewnienie spójnej struktury i interfejsów, które ułatwią dodanie infrastruktury w przyszłości.
 
 - [ ] Rozbudowa modelu domenowego o walidację danych wejściowych.
+
 Cel kroku:
+
 Wprowadzenie walidacji na poziomie domeny, np. poprawności ID lotu, dat i godzin.
 
 - [ ] Implementacja mechanizmu logowania dla kryteriów zniżek (dla tenantów grupy A).
+
 Cel kroku:
+
 Wprowadzenie rejestracji zastosowanych kryteriów zniżek z opcją łatwego rozszerzenia logiki dla przyszłych wymagań.
 
 - [ ] Usprawnienie zarządzania cenami lotów.
+
 Cel kroku:
+
 Wprowadzenie dynamicznych reguł ustalania cen, np. na podstawie popularności lotu, sezonowości lub innych czynników.
 
 - [ ] Optymalizacja systemu pod kątem wydajności.
+
 Cel kroku:
+
 Analiza i eliminacja potencjalnych wąskich gardeł w logice biznesowej, np. przetwarzania dużych zbiorów lotów i zniżek.
 
 ---
