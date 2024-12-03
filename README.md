@@ -55,28 +55,28 @@ Testy zostały napisane w oparciu o NUnit i można je uruchomić za pomocą Visu
 
 ## Plan rozwoju
 
-### 1. [x] Implementacja podstawowego modelu domenowego wraz z podstawowymi testami jednostkowymi
+[x] ### 1. Implementacja podstawowego modelu domenowego wraz z podstawowymi testami jednostkowymi
 - **Cel kroku:** Zaprezentowanie struktury projektu, pierwszego pomysłu na realizację zadania, przygotowanie do dalszego rozwoju.
 
-### 2. [x] Dodanie nowych kryteriów zniżek poprzez implementację interfejsu `IDiscountCriteria`
+[x] ### 2. Dodanie nowych kryteriów zniżek poprzez implementację interfejsu `IDiscountCriteria`
 - **Cel kroku:** Rozszerzenie logiki biznesowej poprzez umożliwienie łatwego dodawania kolejnych reguł zniżek zgodnie z zasadą Open/Closed.
 
-### 3. [x] Rozszerzenie funkcjonalności zarządzania lotami
+[x] ### 3. Rozszerzenie funkcjonalności zarządzania lotami
 - **Cel kroku:** Dodanie możliwości aktualizacji, usuwania lotów oraz bardziej zaawansowanego wyszukiwania lotów w systemie.
 
-### 4. [x] Przygotowanie kodu umożliwiającego łatwą integrację z API lub bazą danych
+[x]### 4. Przygotowanie kodu umożliwiającego łatwą integrację z API lub bazą danych
 - **Cel kroku:** Zapewnienie spójnej struktury i interfejsów, które ułatwią dodanie infrastruktury w przyszłości.
 
-### 5. [ ] Rozbudowa modelu domenowego o walidację danych wejściowych
+[ ] ### 5. Rozbudowa modelu domenowego o walidację danych wejściowych
 - **Cel kroku:** Wprowadzenie walidacji na poziomie domeny, np. poprawności ID lotu, dat i godzin.
 
-### 6. [ ] Implementacja mechanizmu logowania dla kryteriów zniżek (dla tenantów grupy A)
+[ ] ### 6. Implementacja mechanizmu logowania dla kryteriów zniżek (dla tenantów grupy A)
 - **Cel kroku:** Wprowadzenie rejestracji zastosowanych kryteriów zniżek z opcją łatwego rozszerzenia logiki dla przyszłych wymagań.
 
-### 7. [ ] Usprawnienie zarządzania cenami lotów
+[ ] ### 7. Usprawnienie zarządzania cenami lotów
 - **Cel kroku:** Wprowadzenie dynamicznych reguł ustalania cen, np. na podstawie popularności lotu, sezonowości lub innych czynników.
 
-### 8. [ ] Optymalizacja systemu pod kątem wydajności
+[ ] ### 8. Optymalizacja systemu pod kątem wydajności
 - **Cel kroku:** Analiza i eliminacja potencjalnych wąskich gardeł w logice biznesowej, np. przetwarzania dużych zbiorów lotów i zniżek.
 
 ---
