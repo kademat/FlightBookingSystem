@@ -12,7 +12,10 @@ public class InMemoryFlightRepository : IFlightRepository
     public void UpdateFlight(string flightId, Flight updatedFlight)
     {
         var flight = _flights.FirstOrDefault(f => f.FlightId == flightId);
-        if (flight == null) throw new KeyNotFoundException($"Flight with ID {flightId} not found.");
+        if (flight == null)
+        {
+            throw new KeyNotFoundException($"Flight with ID {flightId} not found.");
+        }
         _flights.Remove(flight);
         _flights.Add(updatedFlight);
     }
@@ -20,13 +23,15 @@ public class InMemoryFlightRepository : IFlightRepository
     public void RemoveFlight(string flightId)
     {
         var flight = _flights.FirstOrDefault(f => f.FlightId == flightId);
-        if (flight == null) throw new KeyNotFoundException($"Flight with ID {flightId} not found.");
+        if (flight == null)
+        {
+            throw new KeyNotFoundException($"Flight with ID {flightId} not found.");
+        }
         _flights.Remove(flight);
     }
 
     public IEnumerable<Flight> SearchFlights(string? from, string? to, DateTime? departureDate, DayOfWeek[]? daysOfWeek)
     {
-        // to fix after adding more criteria
         return _flights.Where(f =>
             (string.IsNullOrEmpty(from) || f.From == from) &&
             (string.IsNullOrEmpty(to) || f.To == to) &&

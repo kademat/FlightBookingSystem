@@ -1,12 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace FlightBooking.Domain.Models
+﻿public class Discount
 {
-    internal class Discount
+    public string Description { get; }
+    public decimal Amount { get; }
+
+    public Discount(string description, decimal amount)
     {
+        Description = description;
+        Amount = amount;
     }
 }

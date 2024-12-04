@@ -7,9 +7,13 @@ public class BirthdayDiscount : IDiscountCriteria
     {
         if (!buyerBirthDate.HasValue)
         {
-            return false; // no birth date - no discount
+            return false; // Without birth date - there is no discount
         }
 
+        // Ignored potential time zone discrepancies. For example, due to time differences (e.g., in Australia), 
+        // a person might already have their birthday in their local time zone while it is still the previous day in another.
+        // Ideally, for a production-grade solution, I would address such edge cases and discuss the requirements further.
+        // Here, a simplified approach is used by comparing only the dates without considering time zones.
         return flight.DepartureTime.Date == buyerBirthDate.Value.Date;
     }
 
@@ -18,5 +22,5 @@ public class BirthdayDiscount : IDiscountCriteria
         return 5m;
     }
 
-    public string GetDescription() => "Discount for birthday";
+    public string GetDescription() => "Birthday Discount";
 }

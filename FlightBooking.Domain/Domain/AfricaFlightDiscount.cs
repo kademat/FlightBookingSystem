@@ -1,13 +1,13 @@
-﻿using FlightBooking.Domain.Interfaces;
+﻿using FlightBooking.Domain.Domain;
+using FlightBooking.Domain.Enums;
+using FlightBooking.Domain.Interfaces;
 using FlightBooking.Domain.Models;
 
 public class AfricaFlightDiscount : IDiscountCriteria
 {
     public bool IsApplicable(Flight flight, DateTime purchaseDate, DateTime? buyerBirthDate)
     {
-        // should be fixed - just first implementation
-        bool isAfricaFlight = flight.To.ToUpper().StartsWith("AFR");
-
+        bool isAfricaFlight = AirportContinentMapper.GetContinent(flight.To) == Continent.Africa;
         bool isThursday = flight.DepartureTime.DayOfWeek == DayOfWeek.Thursday;
 
         return isAfricaFlight && isThursday;
@@ -18,5 +18,5 @@ public class AfricaFlightDiscount : IDiscountCriteria
         return 5m;
     }
 
-    public string GetDescription() => "Discount for flights to Africa on Thursday";
+    public string GetDescription() => "Applies a discount for flights to Africa departing on Thursday.";
 }

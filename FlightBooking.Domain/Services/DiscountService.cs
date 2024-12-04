@@ -13,14 +13,13 @@ namespace FlightBooking.Domain.Services
             _discountManager = discountManager;
         }
 
-        public decimal CalculateDiscountedPrice(decimal basePrice, Flight flight, DateTime purchaseDate, DateTime? buyerBirthDate, string tenantId, TenantGroup tenantGroup)
+        public decimal CalculateDiscountedPrice(decimal basePrice, Flight flight, DateTime purchaseDate, DateTime? buyerBirthDate, TenantGroup tenantGroup)
         {
             var (totalDiscount, appliedDiscounts) = _discountManager.ApplyDiscounts(
                 flight,
                 purchaseDate,
                 buyerBirthDate,
-                logDiscounts: tenantGroup == TenantGroup.A, // Logowanie tylko dla grupy A
-                tenantId: tenantId
+                logDiscounts: tenantGroup == TenantGroup.A
             );
 
             decimal discountedPrice = basePrice - totalDiscount;

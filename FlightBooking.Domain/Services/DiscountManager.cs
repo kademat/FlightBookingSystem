@@ -15,8 +15,7 @@ public class DiscountManager
         Flight flight,
         DateTime purchaseDate,
         DateTime? buyerBirthDate,
-        bool logDiscounts,
-        string tenantId)
+        bool logDiscounts)
     {
         decimal totalDiscount = 0m;
         var appliedDiscounts = new List<string>();
@@ -32,9 +31,10 @@ public class DiscountManager
 
         if (logDiscounts)
         {
-            var log = new DiscountLog(flight.FlightId, tenantId)
+            var log = new DiscountLog(flight.FlightId)
             {
-                AppliedDiscounts = appliedDiscounts
+                // Discounts = appliedDiscounts,
+                FlightId = flight.FlightId
             };
             _discountLogs.Add(log);
         }

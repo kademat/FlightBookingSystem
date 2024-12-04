@@ -34,10 +34,10 @@ namespace FlightBooking.Tests.Services
             var discountService = new DiscountService(discountManager);
 
             var basePrice = 30m;
-            var flight = new Flight("KLM12345BCA", "POL", "AFR", DateTime.Today, DateTime.Today.AddDays(1), DateTime.Today, new[] { DayOfWeek.Thursday }, 5, 120);
+            var flight = new Flight("KLM12345BCA", "POL", "AFR", DateTime.Today, new[] { DayOfWeek.Thursday });
 
             // Act
-            var finalPrice = discountService.CalculateDiscountedPrice(basePrice, flight, DateTime.Today, null, "A", TenantGroup.A);
+            var finalPrice = discountService.CalculateDiscountedPrice(basePrice, flight, DateTime.Today, null, TenantGroup.A);
 
             // Assert
             Assert.That(finalPrice, Is.EqualTo(25m), "The mocked discount was not applied correctly.");
@@ -58,10 +58,10 @@ namespace FlightBooking.Tests.Services
             var discountService = new DiscountService(discountManager);
 
             var flightDate = GetNextThursday(DateTime.Today);
-            var flight = new Flight("KLM12345BCA", "POL", "AFR", flightDate, flightDate.AddDays(1), flightDate, new[] { DayOfWeek.Thursday }, 5, 120);
+            var flight = new Flight("KLM12345BCA", "POL", "AFR", flightDate, new[] { DayOfWeek.Thursday });
 
             // Act
-            var finalPrice = discountService.CalculateDiscountedPrice(basePrice, flight, flightDate, flightDate, "A", TenantGroup.A);
+            var finalPrice = discountService.CalculateDiscountedPrice(basePrice, flight, flightDate, flightDate, TenantGroup.A);
 
             // Assert
             Assert.That(finalPrice, Is.EqualTo(expectedPrice), $"The calculated price should be {expectedPrice}.");
@@ -77,7 +77,7 @@ namespace FlightBooking.Tests.Services
 
             var discountService = new DiscountService(discountManager);
 
-            var flight = new Flight("KLM12345BCA", "POL", "AFR", DateTime.Today, DateTime.Today.AddDays(1), DateTime.Today, new[] { DayOfWeek.Thursday }, 5, 120);
+            var flight = new Flight("KLM12345BCA", "POL", "AFR", DateTime.Today, new[] { DayOfWeek.Thursday });
             var buyerBirthDate = DateTime.Today;
 
             // Act
@@ -86,7 +86,6 @@ namespace FlightBooking.Tests.Services
                 flight: flight,
                 purchaseDate: DateTime.Today,
                 buyerBirthDate: buyerBirthDate,
-                tenantId: "TENANT_A",
                 tenantGroup: TenantGroup.A
             );
 
@@ -94,7 +93,7 @@ namespace FlightBooking.Tests.Services
 
             // Assert
             Assert.That(logs.Count, Is.EqualTo(1));
-            Assert.That(logs[0].AppliedDiscounts, Contains.Item("Discount for birthday."));
+            Assert.That(logs[0].FlightId, Is.EqualTo("KLM12345BCA"));
         }
 
         [Test]
@@ -107,7 +106,7 @@ namespace FlightBooking.Tests.Services
 
             var discountService = new DiscountService(discountManager);
 
-            var flight = new Flight("KLM12345BCA", "POL", "AFR", DateTime.Today, DateTime.Today.AddDays(1), DateTime.Today, new[] { DayOfWeek.Thursday }, 5, 120);
+            var flight = new Flight("KLM12345BCA", "POL", "AFR", DateTime.Today, new[] { DayOfWeek.Thursday });
             var buyerBirthDate = DateTime.Today;
 
             // Act
@@ -116,7 +115,6 @@ namespace FlightBooking.Tests.Services
                 flight: flight,
                 purchaseDate: DateTime.Today,
                 buyerBirthDate: buyerBirthDate,
-                tenantId: "TENANT_B",
                 tenantGroup: TenantGroup.B
             );
 

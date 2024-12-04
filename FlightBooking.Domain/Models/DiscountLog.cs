@@ -1,12 +1,6 @@
-﻿public class DiscountLog
+﻿public class DiscountLog(string flightId)
 {
-    public string FlightId { get; set; }
+    public string FlightId { get; set; } = flightId;
     public string TenantId { get; set; }
-    public List<string> AppliedDiscounts { get; set; } = new();
-
-    public DiscountLog(string flightId, string tenantId)
-    {
-        FlightId = flightId;
-        TenantId = tenantId;
-    }
+    public List<Discount> Discounts { get; } = new();
 }
