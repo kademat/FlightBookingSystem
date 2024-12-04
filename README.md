@@ -4,8 +4,8 @@
 **FlightBookingSystem** to implementacja modelu domenowego systemu sprzedaży biletów lotniczych zgodnego z zasadami **SOLID**. Projekt został przygotowany z myślą o umożliwieniu łatwej rozbudowy oraz testowaniu z użyciem podejścia **TDD**. Nie zawiera warstw API ani infrastruktury, zgodnie z wymaganiami zadania.
 
 System obsługuje takie funkcjonalności, jak:
-- Dodawanie/modyfikacja/usuwanie lotów.
-- Zakup biletów na loty z dynamicznym obliczaniem ceny.
+- Dodawanie/modyfikacja/usuwanie/wyszukiwanie lotów.
+- Dodawanie oraz kupowanie biletów na loty z dynamicznym obliczaniem ceny.
 - Zniżki na podstawie elastycznych kryteriów.
 
 ---
@@ -16,6 +16,8 @@ Projekt został podzielony na dwa główne komponenty:
    - **Enums/** – definicje typów wyliczeniowych, np. `TenantGroup`.
    - **Interfaces/** – interfejsy umożliwiające rozbudowę systemu (np. `IDiscountCriteria`).
    - **Models/** – klasy reprezentujące model domenowy (np. `Flight`).
+     	- **Discounts/** - klasy reprezentujące zniżki
+	- **Helpers/** - klasy odpowiedzialne np. za mapowanie/reprezentację danych
    - **Repositories/** – klasy reprezentujące repozytorium.
    - **Services/** – implementacje logiki biznesowej, np. `DiscountService`.
    - **Validators/** – walidacja danych.
@@ -70,7 +72,7 @@ Testy zostały napisane w oparciu o NUnit i można je uruchomić za pomocą Visu
   - **Cel kroku:** Zapewnienie spójnej struktury i interfejsów, które ułatwią dodanie infrastruktury w przyszłości.
 
 - [x] **5. Rozbudowa modelu domenowego o walidację danych wejściowych**
-  - **Cel kroku:** Wprowadzenie walidacji na poziomie domeny, np. poprawności ID lotu, dat i godzin.
+  - **Cel kroku:** Wprowadzenie walidacji na poziomie domeny, np. poprawności ID lotu.
 
 - [x] **6. Implementacja mechanizmu logowania dla kryteriów zniżek (dla tenantów grupy A)**
   - **Cel kroku:** Wprowadzenie rejestracji zastosowanych kryteriów zniżek z opcją łatwego rozszerzenia logiki dla przyszłych wymagań.
