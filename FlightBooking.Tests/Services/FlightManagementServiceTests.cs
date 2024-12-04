@@ -10,8 +10,8 @@ public class FlightManagementServiceTests
     private FlightManagementService _flightManagementService;
     private IFlightRepository _flightRepository;
     private IFlightBookingService _flightBookingService;
-    private DiscountService _flightDiscountService;
-    private DiscountManager _discountManager;
+    private IDiscountService _flightDiscountService;
+    private IDiscountManager _discountManager;
     private Mock<IDiscountLogger> _mockDiscountLogger;
 
     [SetUp]
@@ -95,7 +95,7 @@ public class FlightManagementServiceTests
     public void Should_Log_Discounts_For_Tenant_Group_A()
     {
         var flight = new Flight("KLM12345BCA", "NYC", "AFR", DateTime.Today, [DayOfWeek.Thursday]);
-        flight.AddTicket(new TicketPrice(40m));
+        flight.TicketService.AddTicket(new TicketPrice(40m));
         _flightRepository.AddFlight(flight);
 
         var tenantGroup = TenantGroup.A;
@@ -117,7 +117,7 @@ public class FlightManagementServiceTests
     {
         // Arrange
         var flight = new Flight("KLM12345BCA", "NYC", "AFR", DateTime.Today, [DayOfWeek.Thursday]);
-        flight.AddTicket(new TicketPrice(40m));
+        flight.TicketService.AddTicket(new TicketPrice(40m));
         _flightRepository.AddFlight(flight);
 
         var tenantGroup = TenantGroup.B;
@@ -132,7 +132,7 @@ public class FlightManagementServiceTests
     public void BookFlight_WithNoTicketsLeft_ShouldThrowException()
     {
         var flight = new Flight("KLM12345BCA", "NYC", "AFR", DateTime.Today, [DayOfWeek.Thursday]);
-        flight.AddTicket(new TicketPrice(40m));
+        flight.TicketService.AddTicket(new TicketPrice(40m));
         _flightRepository.AddFlight(flight);
 
         _flightBookingService.BookFlight(flight.FlightId, TenantGroup.A, DateTime.Today);
@@ -147,10 +147,10 @@ public class FlightManagementServiceTests
     {
         var flight = new Flight("KLM12345BCA", "NYC", "AFR", DateTime.Today, [DayOfWeek.Thursday]);
         var firstTicketBasePrice = 40m;
-        flight.AddTicket(new TicketPrice(firstTicketBasePrice)); // first ticket that was added - should be sold as first ticket
+        flight.TicketService.AddTicket(new TicketPrice(firstTicketBasePrice)); // first ticket that was added - should be sold as first ticket
 
         var secondTicketBasePrice = 50m;
-        flight.AddTicket(new TicketPrice(secondTicketBasePrice)); // second ticket
+        flight.TicketService.AddTicket(new TicketPrice(secondTicketBasePrice)); // second ticket
         _flightRepository.AddFlight(flight);
 
         // Act
@@ -183,13 +183,13 @@ public class FlightManagementServiceTests
         var nrOfTickets = 15;
         for (int i = 0; i < nrOfTickets; i++)
         {
-            flight.AddTicket(new TicketPrice(ticketBasePrice)); // first ticket that was added - should be sold as first ticket
+            flight.TicketService.AddTicket(new TicketPrice(ticketBasePrice)); // first ticket that was added - should be sold as first ticket
         }
 
         _flightRepository.AddFlight(flight);
 
         // Act
-        var currentNrOfTickets = flight.TicketsCount;
+        var currentNrOfTickets = flight.TicketService.TicketsCount;
         // Assert
         Assert.That(currentNrOfTickets, Is.EqualTo(nrOfTickets));
     }

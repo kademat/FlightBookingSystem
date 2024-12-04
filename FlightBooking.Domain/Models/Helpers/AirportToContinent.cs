@@ -1,6 +1,6 @@
 ﻿using FlightBooking.Domain.Enums;
 
-namespace FlightBooking.Domain.Models
+namespace FlightBooking.Domain.Models.Helpers
 {
     /// <summary>
     /// A static class for mapping airport codes (IATA) to their respective continents.

@@ -1,14 +1,12 @@
 ﻿using FlightBooking.Domain.Enums;
 using FlightBooking.Domain.Interfaces;
-using FlightBooking.Domain.Models;
-using FlightBooking.Domain.Services;
 
 public class FlightBookingService : IFlightBookingService
 {
     private readonly IFlightRepository _flightRepository;
-    private readonly DiscountService _discountService;
+    private readonly IDiscountService _discountService;
 
-    public FlightBookingService(IFlightRepository flightRepository, DiscountService discountService)
+    public FlightBookingService(IFlightRepository flightRepository, IDiscountService discountService)
     {
         _flightRepository = flightRepository;
         _discountService = discountService;
@@ -37,7 +35,7 @@ public class FlightBookingService : IFlightBookingService
     /// <exception cref="InvalidOperationException">Thrown if no tickets are available</exception>
     private TicketPrice ReserveTicket(Flight flight)
     {
-        var ticket = flight.PeekTicket(); // Simulates reservation without removal
+        var ticket = flight.TicketService.PeekTicket(); // Simulates reservation without removal
         if (ticket == null)
         {
             throw new InvalidOperationException($"No tickets available for flight {flight.FlightId}.");
@@ -53,6 +51,6 @@ public class FlightBookingService : IFlightBookingService
     /// <param name="ticket">The ticket to be removed</param>
     private void ConfirmPurchase(Flight flight, TicketPrice ticket)
     {
-        flight.SellTicket(ticket);
+        flight.TicketService.SellTicket(ticket);
     }
 }

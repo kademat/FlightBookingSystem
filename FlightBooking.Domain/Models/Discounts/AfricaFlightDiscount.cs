@@ -1,6 +1,6 @@
 ﻿using FlightBooking.Domain.Enums;
 using FlightBooking.Domain.Interfaces;
-using FlightBooking.Domain.Models;
+using FlightBooking.Domain.Models.Helpers;
 
 public class AfricaFlightDiscount : IDiscountCriteria
 {

@@ -1,7 +1,6 @@
 ﻿using FlightBooking.Domain.Interfaces;
-using FlightBooking.Domain.Models;
 
-public class DiscountManager
+public class DiscountManager : IDiscountManager
 {
     private readonly List<IDiscountCriteria> _discountCriteriaList = new();
     private readonly IDiscountLogger _logger;

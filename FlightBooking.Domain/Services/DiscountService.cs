@@ -1,14 +1,14 @@
 ﻿using FlightBooking.Domain.Enums;
-using FlightBooking.Domain.Models;
+using FlightBooking.Domain.Interfaces;
 
 namespace FlightBooking.Domain.Services
 {
-    public class DiscountService
+    public class DiscountService : IDiscountService
     {
         private const decimal MinPrice = 20m;
-        private readonly DiscountManager _discountManager;
+        private readonly IDiscountManager _discountManager;
 
-        public DiscountService(DiscountManager discountManager)
+        public DiscountService(IDiscountManager discountManager)
         {
             _discountManager = discountManager;
         }
@@ -21,7 +21,7 @@ namespace FlightBooking.Domain.Services
                 logDiscounts: tenantGroup == TenantGroup.A
             );
 
-            var flightBasePrice = flight.GetBasePrice();
+            var flightBasePrice = flight.TicketService.GetBasePrice();
 
             if (!flightBasePrice.HasValue)
             {
