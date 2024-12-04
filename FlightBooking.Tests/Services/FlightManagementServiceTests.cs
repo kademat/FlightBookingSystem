@@ -100,6 +100,9 @@ public class FlightManagementServiceTests
 
         var tenantGroup = TenantGroup.A;
 
+        _discountManager.AddDiscountCriteria(new BirthdayDiscount());
+        _discountManager.AddDiscountCriteria(new AfricaFlightDiscount());
+
         _flightBookingService.BookFlight(flight.FlightId, tenantGroup, DateTime.Today);
 
         _mockDiscountLogger.Verify(logger => logger.Log(It.Is<DiscountLog>(log =>
