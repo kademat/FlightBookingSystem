@@ -16,8 +16,8 @@ Projekt został podzielony na dwa główne komponenty:
    - **Enums/** – definicje typów wyliczeniowych, np. `TenantGroup`.
    - **Interfaces/** – interfejsy umożliwiające rozbudowę systemu (np. `IDiscountCriteria`).
    - **Models/** – klasy reprezentujące model domenowy (np. `Flight`).
-     	- ***Discounts/*** - klasy reprezentujące zniżki
-	- ***Helpers/*** - klasy odpowiedzialne np. za mapowanie/reprezentację danych
+     	-- ***Discounts/*** - klasy reprezentujące zniżki
+	-- ***Helpers/*** - klasy odpowiedzialne np. za mapowanie/reprezentację danych
    - **Repositories/** – klasy reprezentujące repozytorium.
    - **Services/** – implementacje logiki biznesowej, np. `DiscountService`.
    - **Validators/** – walidacja danych.
