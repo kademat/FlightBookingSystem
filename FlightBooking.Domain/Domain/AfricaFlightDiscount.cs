@@ -5,7 +5,7 @@ using FlightBooking.Domain.Models;
 
 public class AfricaFlightDiscount : IDiscountCriteria
 {
-    public bool IsApplicable(Flight flight, DateTime purchaseDate, DateTime? buyerBirthDate)
+    public bool IsApplicable(Flight flight, DateTime flightDate, DateTime? buyerBirthDate)
     {
         bool isAfricaFlight = AirportContinentMapper.GetContinent(flight.To) == Continent.Africa;
         bool isThursday = flight.DepartureTime.DayOfWeek == DayOfWeek.Thursday;

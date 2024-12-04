@@ -3,7 +3,7 @@ using FlightBooking.Domain.Models;
 
 public class BirthdayDiscount : IDiscountCriteria
 {
-    public bool IsApplicable(Flight flight, DateTime purchaseDate, DateTime? buyerBirthDate)
+    public bool IsApplicable(Flight flight, DateTime flightDate, DateTime? buyerBirthDate)
     {
         if (!buyerBirthDate.HasValue)
         {
