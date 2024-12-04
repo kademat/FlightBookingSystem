@@ -1,5 +1,4 @@
-﻿using FlightBooking.Domain.Domain;
-using FlightBooking.Domain.Enums;
+﻿using FlightBooking.Domain.Enums;
 using FlightBooking.Domain.Interfaces;
 using FlightBooking.Domain.Models;
 

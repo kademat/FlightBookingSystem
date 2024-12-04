@@ -1,5 +1,4 @@
 ﻿using FlightBooking.Domain.Models;
-using System.Collections.Generic;
 
 public interface IFlightRepository
 {

@@ -1,8 +1,8 @@
-﻿public class FlightPrice
+﻿public class TicketPrice
 {
     public decimal BasePrice { get; set; }
 
-    public FlightPrice(decimal basePrice)
+    public TicketPrice(decimal basePrice)
     {
         BasePrice = basePrice;
     }

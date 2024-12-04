@@ -21,17 +21,17 @@ namespace FlightBooking.Domain.Services
                 logDiscounts: tenantGroup == TenantGroup.A
             );
 
-            var flightPrice = flight.GetPrice();
+            var flightBasePrice = flight.GetBasePrice();
 
-            if (!flightPrice.HasValue)
+            if (!flightBasePrice.HasValue)
             {
-                throw new ArgumentException($"There is no price for flight id {flight.FlightId}. Maybe there are no tickets?");
+                throw new ArgumentException($"There is no base price for flight id {flight.FlightId}.");
             }
 
-            decimal discountedPrice = flightPrice.Value - totalDiscount;
+            decimal discountedPrice = flightBasePrice.Value - totalDiscount;
 
             // Here it's assumed that if price after all discounts is below MinPrice there are no discounts at all.
-            return discountedPrice < MinPrice ? flightPrice.Value : discountedPrice;
+            return discountedPrice < MinPrice ? flightBasePrice.Value : discountedPrice;
         }
     }
 }

@@ -37,7 +37,7 @@ namespace FlightBooking.Tests.Services
             var discountService = new DiscountService(_discountManager);
 
             var flight = CreateFlight();
-            flight.AddPrice(new FlightPrice(basePrice: basePrice) );
+            flight.AddTicket(new TicketPrice(basePrice: basePrice) );
 
 
             // Act
@@ -66,7 +66,7 @@ namespace FlightBooking.Tests.Services
             var thursday = GetNextThursday(DateTime.Today);
             // Flight to Africa (Cairo) on Thursday
             var flight = CreateFlight(to: "CAI", departureTime: thursday);
-            flight.AddPrice(new FlightPrice(basePrice: basePrice));
+            flight.AddTicket(new TicketPrice(basePrice: basePrice));
             var birthdayDate = thursday; // It turns out that it's also a birthday. This is not a DRY violation; I wanted to show a case where we have two discounts.
             // Thursday + Africa + birthday are together by "coincidance"
 

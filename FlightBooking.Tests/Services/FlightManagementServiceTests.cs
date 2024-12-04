@@ -2,7 +2,6 @@
 using FlightBooking.Domain.Models;
 using FlightBooking.Domain.Services;
 using Moq;
-using NUnit.Framework;
 
 [TestFixture]
 public class FlightManagementServiceTests
@@ -29,7 +28,7 @@ public class FlightManagementServiceTests
     public void Should_Add_Flight()
     {
         var flightId = "KLM12345BCA";
-        var flight = new Flight(flightId, "NYC", "LAX", DateTime.Today, new[] { DayOfWeek.Monday });
+        var flight = new Flight(flightId, "NYC", "LAX", DateTime.Today, [DayOfWeek.Monday]);
         _flightManagementService.AddFlight(flight);
 
         var retrievedFlight = _flightManagementService.GetFlightById(flightId);
@@ -42,10 +41,10 @@ public class FlightManagementServiceTests
     public void Should_Update_Flight()
     {
         var flightId = "KLM12345BCA";
-        var flight = new Flight(flightId, "NYC", "LAX", DateTime.Today, new[] { DayOfWeek.Monday });
+        var flight = new Flight(flightId, "NYC", "LAX", DateTime.Today, [DayOfWeek.Monday]);
         _flightManagementService.AddFlight(flight);
 
-        var updatedFlight = new Flight(flightId, "NYC", "SFO", DateTime.Today, new[] { DayOfWeek.Monday });
+        var updatedFlight = new Flight(flightId, "NYC", "SFO", DateTime.Today, [DayOfWeek.Monday]);
         _flightManagementService.UpdateFlight(flightId, updatedFlight);
 
         var retrievedFlight = _flightManagementService.GetFlightById(flightId);
@@ -58,7 +57,7 @@ public class FlightManagementServiceTests
     public void Should_Remove_Flight()
     {
         var flightId = "KLM12345BCA";
-        var flight = new Flight(flightId, "NYC", "LAX", DateTime.Today, new[] { DayOfWeek.Monday });
+        var flight = new Flight(flightId, "NYC", "LAX", DateTime.Today, [DayOfWeek.Monday]);
         _flightManagementService.AddFlight(flight);
 
         _flightManagementService.RemoveFlight(flightId);
@@ -79,13 +78,13 @@ public class FlightManagementServiceTests
 
         var tuesdayFlightDate = mondayFlightDate.AddDays(1);
 
-        var flight1 = new Flight("KLM12345BCA", "NYC", "LAX", mondayFlightDate, new[] { DayOfWeek.Monday });
-        var flight2 = new Flight("KLM12346BCA", "NYC", "NYC", tuesdayFlightDate, new[] { DayOfWeek.Tuesday });
+        var flight1 = new Flight("KLM12345BCA", "NYC", "LAX", mondayFlightDate, [DayOfWeek.Monday]);
+        var flight2 = new Flight("KLM12346BCA", "NYC", "NYC", tuesdayFlightDate, [DayOfWeek.Tuesday]);
 
         _flightManagementService.AddFlight(flight1);
         _flightManagementService.AddFlight(flight2);
 
-        var results = _flightManagementService.SearchFlights("NYC", "LAX", mondayFlightDate, new[] { DayOfWeek.Monday });
+        var results = _flightManagementService.SearchFlights("NYC", "LAX", mondayFlightDate, [DayOfWeek.Monday]);
 
         Assert.That(results.Count(), Is.EqualTo(1));
         Assert.That(results.First().FlightId, Is.EqualTo("KLM12345BCA"));
@@ -94,8 +93,8 @@ public class FlightManagementServiceTests
     [Test]
     public void Should_Log_Discounts_For_Tenant_Group_A()
     {
-        var flight = new Flight("KLM12345BCA", "NYC", "AFR", DateTime.Today, new[] { DayOfWeek.Thursday });
-        flight.AddPrice(new FlightPrice(40m));
+        var flight = new Flight("KLM12345BCA", "NYC", "AFR", DateTime.Today, [DayOfWeek.Thursday]);
+        flight.AddTicket(new TicketPrice(40m));
         _flightRepository.AddFlight(flight);
 
         var tenantGroup = TenantGroup.A;
@@ -115,15 +114,50 @@ public class FlightManagementServiceTests
     [Test]
     public void Should_Not_Log_Discounts_For_Tenant_Group_B()
     {
-        var flight = new Flight("KLM12345BCA", "NYC", "AFR", DateTime.Today, new[] { DayOfWeek.Thursday });
-        flight.AddPrice(new FlightPrice(40m));
+        // Arrange
+        var flight = new Flight("KLM12345BCA", "NYC", "AFR", DateTime.Today, [DayOfWeek.Thursday]);
+        flight.AddTicket(new TicketPrice(40m));
         _flightRepository.AddFlight(flight);
 
         var tenantGroup = TenantGroup.B;
 
         _flightBookingService.BookFlight(flight.FlightId, tenantGroup, DateTime.Today);
 
+        // Assert
         _mockDiscountLogger.Verify(logger => logger.Log(It.IsAny<DiscountLog>()), Times.Never, "Expected logger not to log discounts for Tenant Group B.");
+    }
+
+    [Test]
+    public void Book_More_Flights_Than_Tickets_Should_Throw_Exception()
+    {
+        var flight = new Flight("KLM12345BCA", "NYC", "AFR", DateTime.Today, [DayOfWeek.Thursday]);
+        flight.AddTicket(new TicketPrice(40m));
+        _flightRepository.AddFlight(flight);
+
+        _flightBookingService.BookFlight(flight.FlightId, TenantGroup.A, DateTime.Today);
+        // Assert
+        Assert.Throws<InvalidOperationException>(() =>
+            _flightBookingService.BookFlight(flight.FlightId, TenantGroup.A, DateTime.Today),
+            "Expected an exception when trying to book more flights than tickets available.");
+    }
+
+    [Test]
+    public void Should_Buy_First_Ticket_Then_Second()
+    {
+        var flight = new Flight("KLM12345BCA", "NYC", "AFR", DateTime.Today, [DayOfWeek.Thursday]);
+        var firstTicketBasePrice = 40m;
+        flight.AddTicket(new TicketPrice(firstTicketBasePrice)); // first ticket that was added - should be sold as first ticket
+
+        var secondTicketBasePrice = 50m;
+        flight.AddTicket(new TicketPrice(secondTicketBasePrice)); // second ticket
+        _flightRepository.AddFlight(flight);
+
+        // Act
+        var firstTicketPrice = _flightBookingService.BookFlight(flight.FlightId, TenantGroup.A, DateTime.Today);
+        var secondTicketPrice = _flightBookingService.BookFlight(flight.FlightId, TenantGroup.A, DateTime.Today);
+        // Assert
+        Assert.That(firstTicketPrice, Is.EqualTo(firstTicketBasePrice));
+        Assert.That(secondTicketPrice, Is.EqualTo(secondTicketBasePrice));
     }
 
     [Test]
