@@ -17,4 +17,6 @@ public class AfricaFlightDiscount : IDiscountCriteria
     {
         return 5m;
     }
+
+    public string GetDescription() => "Discount for flights to Africa on Thursday";
 }

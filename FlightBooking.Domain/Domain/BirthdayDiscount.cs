@@ -17,4 +17,6 @@ public class BirthdayDiscount : IDiscountCriteria
     {
         return 5m;
     }
+
+    public string GetDescription() => "Discount for birthday";
 }

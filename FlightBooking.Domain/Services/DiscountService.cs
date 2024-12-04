@@ -1,9 +1,11 @@
-﻿using FlightBooking.Domain.Models;
+﻿using FlightBooking.Domain.Enums;
+using FlightBooking.Domain.Models;
 
 namespace FlightBooking.Domain.Services
 {
     public class DiscountService
     {
+        private const decimal MinPrice = 20m;
         private readonly DiscountManager _discountManager;
 
         public DiscountService(DiscountManager discountManager)
@@ -11,13 +13,21 @@ namespace FlightBooking.Domain.Services
             _discountManager = discountManager;
         }
 
-        public decimal CalculateDiscountedPrice(decimal basePrice, Flight flight, DateTime purchaseDate, DateTime? buyerBirthDate)
+        public decimal CalculateDiscountedPrice(decimal basePrice, Flight flight, DateTime purchaseDate, DateTime? buyerBirthDate, string tenantId, TenantGroup tenantGroup)
         {
-            decimal totalDiscount = _discountManager.ApplyDiscounts(flight, purchaseDate, buyerBirthDate);
+            var (totalDiscount, appliedDiscounts) = _discountManager.ApplyDiscounts(
+                flight,
+                purchaseDate,
+                buyerBirthDate,
+                logDiscounts: tenantGroup == TenantGroup.A, // Logowanie tylko dla grupy A
+                tenantId: tenantId
+            );
 
             decimal discountedPrice = basePrice - totalDiscount;
 
-            return discountedPrice < 20m ? 20m : discountedPrice;
+            return discountedPrice < MinPrice ? MinPrice : discountedPrice;
         }
+
+        public List<DiscountLog> GetDiscountLogs() => _discountManager.GetLogs();
     }
 }

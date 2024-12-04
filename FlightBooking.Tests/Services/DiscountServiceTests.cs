@@ -1,4 +1,5 @@
-﻿using FlightBooking.Domain.Interfaces;
+﻿using FlightBooking.Domain.Enums;
+using FlightBooking.Domain.Interfaces;
 using FlightBooking.Domain.Models;
 using FlightBooking.Domain.Services;
 using Moq;
@@ -28,7 +29,7 @@ namespace FlightBooking.Tests.Services
                         .Returns(5m);
 
             var discountManager = new DiscountManager();
-            discountManager.RegisterCriteria(mockCriteria.Object);
+            discountManager.AddDiscountCriteria(mockCriteria.Object);
 
             var discountService = new DiscountService(discountManager);
 
@@ -36,7 +37,7 @@ namespace FlightBooking.Tests.Services
             var flight = new Flight("KLM12345BCA", "POL", "AFR", DateTime.Today, DateTime.Today.AddDays(1), DateTime.Today, new[] { DayOfWeek.Thursday }, 5, 120);
 
             // Act
-            var finalPrice = discountService.CalculateDiscountedPrice(basePrice, flight, DateTime.Today, null);
+            var finalPrice = discountService.CalculateDiscountedPrice(basePrice, flight, DateTime.Today, null, "A", TenantGroup.A);
 
             // Assert
             Assert.That(finalPrice, Is.EqualTo(25m), "The mocked discount was not applied correctly.");
@@ -50,9 +51,9 @@ namespace FlightBooking.Tests.Services
             // Arrange
             var discountManager = new DiscountManager();
             if (isBirthday)
-                discountManager.RegisterCriteria(new BirthdayDiscount());
+                discountManager.AddDiscountCriteria(new BirthdayDiscount());
             if (isAfricaOnThursday)
-                discountManager.RegisterCriteria(new AfricaFlightDiscount());
+                discountManager.AddDiscountCriteria(new AfricaFlightDiscount());
 
             var discountService = new DiscountService(discountManager);
 
@@ -60,10 +61,69 @@ namespace FlightBooking.Tests.Services
             var flight = new Flight("KLM12345BCA", "POL", "AFR", flightDate, flightDate.AddDays(1), flightDate, new[] { DayOfWeek.Thursday }, 5, 120);
 
             // Act
-            var finalPrice = discountService.CalculateDiscountedPrice(basePrice, flight, flightDate, flightDate);
+            var finalPrice = discountService.CalculateDiscountedPrice(basePrice, flight, flightDate, flightDate, "A", TenantGroup.A);
 
             // Assert
             Assert.That(finalPrice, Is.EqualTo(expectedPrice), $"The calculated price should be {expectedPrice}.");
+        }
+
+        [Test]
+        public void Should_Log_Discounts_For_Tenant_Group_A()
+        {
+            // Arrange
+            var discountManager = new DiscountManager();
+            discountManager.AddDiscountCriteria(new BirthdayDiscount());
+            discountManager.AddDiscountCriteria(new AfricaFlightDiscount());
+
+            var discountService = new DiscountService(discountManager);
+
+            var flight = new Flight("KLM12345BCA", "POL", "AFR", DateTime.Today, DateTime.Today.AddDays(1), DateTime.Today, new[] { DayOfWeek.Thursday }, 5, 120);
+            var buyerBirthDate = DateTime.Today;
+
+            // Act
+            var finalPrice = discountService.CalculateDiscountedPrice(
+                basePrice: 30m,
+                flight: flight,
+                purchaseDate: DateTime.Today,
+                buyerBirthDate: buyerBirthDate,
+                tenantId: "TENANT_A",
+                tenantGroup: TenantGroup.A
+            );
+
+            var logs = discountService.GetDiscountLogs();
+
+            // Assert
+            Assert.That(logs.Count, Is.EqualTo(1));
+            Assert.That(logs[0].AppliedDiscounts, Contains.Item("Discount for birthday."));
+        }
+
+        [Test]
+        public void Should_Not_Log_Discounts_For_Tenant_Group_B()
+        {
+            // Arrange
+            var discountManager = new DiscountManager();
+            discountManager.AddDiscountCriteria(new BirthdayDiscount());
+            discountManager.AddDiscountCriteria(new AfricaFlightDiscount());
+
+            var discountService = new DiscountService(discountManager);
+
+            var flight = new Flight("KLM12345BCA", "POL", "AFR", DateTime.Today, DateTime.Today.AddDays(1), DateTime.Today, new[] { DayOfWeek.Thursday }, 5, 120);
+            var buyerBirthDate = DateTime.Today;
+
+            // Act
+            var finalPrice = discountService.CalculateDiscountedPrice(
+                basePrice: 30m,
+                flight: flight,
+                purchaseDate: DateTime.Today,
+                buyerBirthDate: buyerBirthDate,
+                tenantId: "TENANT_B",
+                tenantGroup: TenantGroup.B
+            );
+
+            var logs = discountService.GetDiscountLogs();
+
+            // Assert
+            Assert.That(logs.Count, Is.EqualTo(0));
         }
 
         private DateTime GetNextThursday(DateTime startDate)
