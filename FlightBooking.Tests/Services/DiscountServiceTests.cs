@@ -100,6 +100,30 @@ namespace FlightBooking.Tests.Services
         }
 
         [Test]
+        public void EmptyDiscountFactory_ShouldNotGiveDiscount()
+        {
+            // Arrange
+            var flightId = "LOG12345NOT";
+            var flight = CreateFlight(flightId: flightId);
+
+            var mockDiscountFactory = new Mock<IDiscountFactory>();
+            mockDiscountFactory
+                .Setup(factory => factory.CreateDiscounts())
+                .Returns([]); // No discounts for this test case
+
+            // Register the mocked factory in the DiscountManager
+            _discountManager.RegisterDiscountFactory(mockDiscountFactory.Object);
+
+            var buyerBirthDate = DateTime.Today;
+
+            // Act
+            var (totalDiscount, appliedDiscounts) = _discountManager.ApplyDiscounts(flight, buyerBirthDate, logDiscounts: true);
+
+            // Assert
+            Assert.That(totalDiscount, Is.EqualTo(0));
+        }
+
+        [Test]
         public void Should_Log_Discounts_When_Enabled()
         {
             // Arrange

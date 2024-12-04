@@ -16,6 +16,15 @@ public class DiscountManager
         _discountCriteriaList.Add(discountCriteria);
     }
 
+    public void RegisterDiscountFactory(IDiscountFactory factory)
+    {
+        var discounts = factory.CreateDiscounts();
+        foreach (var discount in discounts)
+        {
+            AddDiscountCriteria(discount);
+        }
+    }
+
     public (decimal totalDiscount, List<string> appliedDiscounts) ApplyDiscounts(
         Flight flight,
         DateTime? buyerBirthDate,
