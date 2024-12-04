@@ -110,9 +110,9 @@ Dla grupy B kryteria te nie są zapisywane.
 ---
 
 ## Jak dodać nowe kryterium zniżek?
-Dodaj nową klasę, która implementuje IDiscountCriteria.
-Zaimplementuj logikę metody IsApplicable, GetDiscountAmount oraz GetDescription.
-Dodaje nowe kryterium w odpowiedniej klasie (np. DiscountFactory).
+Dodaj nową klasę, która implementuje `IDiscountCriteria`.
+Zaimplementuj logikę metody `IsApplicable`, `GetDiscountAmount` oraz `GetDescription`.
+Dodaj nowe kryterium w klasie DiscountFactory.
 Przykład nowego kryterium:
 
 ```csharp
