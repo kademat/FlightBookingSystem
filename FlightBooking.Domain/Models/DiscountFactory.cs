@@ -1,8 +1,8 @@
 ﻿using FlightBooking.Domain.Interfaces;
 
-public class DiscountFactory
+public class DiscountFactory : IDiscountFactory
 {
-    public static IEnumerable<IDiscountCriteria> CreateDiscounts()
+    public IEnumerable<IDiscountCriteria> CreateDiscounts()
     {
         return new List<IDiscountCriteria>
         {

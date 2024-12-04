@@ -1,8 +1,9 @@
 ﻿using FlightBooking.Domain.Enums;
+using FlightBooking.Domain.Interfaces;
 using FlightBooking.Domain.Models;
 using FlightBooking.Domain.Services;
 
-public class FlightBookingService
+public class FlightBookingService : IFlightBookingService
 {
     private readonly IFlightRepository _flightRepository;
     private readonly DiscountService _discountService;

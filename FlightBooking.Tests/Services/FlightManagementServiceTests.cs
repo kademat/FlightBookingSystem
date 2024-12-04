@@ -1,4 +1,5 @@
 ﻿using FlightBooking.Domain.Enums;
+using FlightBooking.Domain.Interfaces;
 using FlightBooking.Domain.Models;
 using FlightBooking.Domain.Services;
 using Moq;
@@ -8,7 +9,7 @@ public class FlightManagementServiceTests
 {
     private FlightManagementService _flightManagementService;
     private IFlightRepository _flightRepository;
-    private FlightBookingService _flightBookingService;
+    private IFlightBookingService _flightBookingService;
     private DiscountService _flightDiscountService;
     private DiscountManager _discountManager;
     private Mock<IDiscountLogger> _mockDiscountLogger;
@@ -128,7 +129,7 @@ public class FlightManagementServiceTests
     }
 
     [Test]
-    public void Book_More_Flights_Than_Tickets_Should_Throw_Exception()
+    public void BookFlight_WithNoTicketsLeft_ShouldThrowException()
     {
         var flight = new Flight("KLM12345BCA", "NYC", "AFR", DateTime.Today, [DayOfWeek.Thursday]);
         flight.AddTicket(new TicketPrice(40m));
@@ -165,5 +166,31 @@ public class FlightManagementServiceTests
     {
         Assert.Throws<KeyNotFoundException>(() =>
             _flightBookingService.BookFlight("KLM12345BCA", TenantGroup.A, DateTime.Today));
+    }
+
+    [Test]
+    public void BookFlight_ForNonExistentFlight_ShouldThrowException()
+    {
+        Assert.Throws<KeyNotFoundException>(() =>
+            _flightBookingService.BookFlight("INVALID123", TenantGroup.A, DateTime.Today));
+    }
+
+    [Test]
+    public void AskingAboutAvailableTickets_ShouldGiveCorrectNumber()
+    {
+        var flight = new Flight("KLM12345BCA", "NYC", "AFR", DateTime.Today, [DayOfWeek.Thursday]);
+        var ticketBasePrice = 40m;
+        var nrOfTickets = 15;
+        for (int i = 0; i < nrOfTickets; i++)
+        {
+            flight.AddTicket(new TicketPrice(ticketBasePrice)); // first ticket that was added - should be sold as first ticket
+        }
+
+        _flightRepository.AddFlight(flight);
+
+        // Act
+        var currentNrOfTickets = flight.TicketsCount;
+        // Assert
+        Assert.That(currentNrOfTickets, Is.EqualTo(nrOfTickets));
     }
 }

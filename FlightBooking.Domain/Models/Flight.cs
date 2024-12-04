@@ -7,7 +7,7 @@ public class Flight
     public string To { get; set; }
     public DateTime DepartureTime { get; set; }
     public DayOfWeek[] DaysOfWeek { get; set; }
-    public Queue<TicketPrice> Tickets { get; } = new();
+    public Queue<TicketPrice> _tickets { get; } = new();
 
 
     public Flight(string flightId, string from, string to, DateTime departureTime, DayOfWeek[] daysOfWeek)
@@ -27,34 +27,34 @@ public class Flight
     /// <param name="price">Price of the ticket</param>
     public void AddTicket(TicketPrice price)
     {
-        Tickets.Enqueue(price);
+        _tickets.Enqueue(price);
     }
 
     public void SellTicket(TicketPrice ticket)
     {
-        if (Tickets.Count == 0 || !Tickets.Peek().Equals(ticket))
+        if (_tickets.Count == 0 || !_tickets.Peek().Equals(ticket))
         {
             throw new InvalidOperationException($"The ticket is no longer available for flight {FlightId}.");
         }
 
-        Tickets.Dequeue();
+        _tickets.Dequeue();
     }
 
     /// <summary>
     /// Gets the number of tickets currently available.
     /// </summary>
-    public int TicketsCount => Tickets.Count;
+    public int TicketsCount => _tickets.Count;
 
     public TicketPrice? PeekTicket()
     {
         // For prod environment it should be reserved, here for simplicity it's just peeked
         // to show process simulation
-        return Tickets.Count > 0 ? Tickets.Peek() : null;
+        return _tickets.Count > 0 ? _tickets.Peek() : null;
     }
 
 
     public decimal? GetBasePrice()
     {
-        return Tickets.Count > 0 ? Tickets.Peek().BasePrice : null;
+        return _tickets.Count > 0 ? _tickets.Peek().BasePrice : null;
     }
 }
