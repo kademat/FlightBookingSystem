@@ -22,13 +22,18 @@ public class FlightBookingService
         }
 
         var basePrice = GetBasePrice(flight);
-        var finalPrice = _discountService.CalculateDiscountedPrice(basePrice, flight, DateTime.Now, buyerBirthDate, tenantGroup);
+        var finalPrice = _discountService.CalculateDiscountedPrice(flight, buyerBirthDate, tenantGroup);
 
         return finalPrice;
     }
 
     private decimal GetBasePrice(Flight flight)
     {
-        return 100m;
+        var price = flight.GetPrice();
+        if (!price.HasValue)
+        {
+            throw new InvalidOperationException($"No price found for flight {flight.FlightId}. Maybe tickets for that flight were not added?");
+        }
+        return price.Value;
     }
 }

@@ -4,7 +4,12 @@ using FlightBooking.Domain.Models;
 public class DiscountManager
 {
     private readonly List<IDiscountCriteria> _discountCriteriaList = new();
-    private readonly List<DiscountLog> _discountLogs = new();
+    private readonly IDiscountLogger _logger;
+
+    public DiscountManager(IDiscountLogger logger)
+    {
+        _logger = logger;
+    }
 
     public void AddDiscountCriteria(IDiscountCriteria discountCriteria)
     {
@@ -13,7 +18,6 @@ public class DiscountManager
 
     public (decimal totalDiscount, List<string> appliedDiscounts) ApplyDiscounts(
         Flight flight,
-        DateTime purchaseDate,
         DateTime? buyerBirthDate,
         bool logDiscounts)
     {
@@ -22,7 +26,7 @@ public class DiscountManager
 
         foreach (var criteria in _discountCriteriaList)
         {
-            if (criteria.IsApplicable(flight, purchaseDate, buyerBirthDate))
+            if (criteria.IsApplicable(flight, buyerBirthDate))
             {
                 totalDiscount += criteria.GetDiscountAmount();
                 appliedDiscounts.Add(criteria.GetDescription());
@@ -33,14 +37,13 @@ public class DiscountManager
         {
             var log = new DiscountLog(flight.FlightId)
             {
-                // Discounts = appliedDiscounts,
-                FlightId = flight.FlightId
+                AppliedDiscounts = new List<string>(appliedDiscounts),
+                TotalDiscount = totalDiscount,
+                BuyerBirthDate = buyerBirthDate
             };
-            _discountLogs.Add(log);
+            _logger.Log(log);
         }
 
         return (totalDiscount, appliedDiscounts);
     }
-
-    public List<DiscountLog> GetLogs() => _discountLogs;
 }

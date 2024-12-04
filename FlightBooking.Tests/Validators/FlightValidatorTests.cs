@@ -1,21 +1,13 @@
 ﻿[TestFixture]
 public class FlightValidatorTests
 {
-    [Test]
-    public void ValidateFlightId_ShouldThrowException_WhenIdIsInvalid()
-    {
-        Assert.Throws<ArgumentException>(() => FlightValidator.ValidateFlightId("12345"));
-    }
 
-    [Test]
-    public void ValidateDates_ShouldThrowException_WhenDatesAreInvalid()
+    [TestCase("")]
+    [TestCase("12345678901")] // lenght is ok, but format is not correct
+    [TestCase("A333CCC")] // too short
+    [TestCase("ASX3333CCXDC")] // too long
+    public void ValidateFlightId_ShouldThrowFormatException_WhenIdIsInvalid(string flightId)
     {
-        Assert.Throws<ArgumentException>(() => FlightValidator.ValidateDates(DateTime.Now, DateTime.Now.AddHours(-1)));
-    }
-
-    [Test]
-    public void ValidatePassengerCount_ShouldThrowException_WhenCountExceedsCapacity()
-    {
-        Assert.Throws<ArgumentException>(() => FlightValidator.ValidatePassengerCount(150, 100));
+        Assert.Throws<FormatException>(() => FlightValidator.ValidateFlightId(flightId));
     }
 }

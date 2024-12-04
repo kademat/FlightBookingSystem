@@ -1,6 +1,14 @@
-﻿public class DiscountLog(string flightId)
+﻿public class DiscountLog
 {
-    public string FlightId { get; set; } = flightId;
-    public string TenantId { get; set; }
-    public List<Discount> Discounts { get; } = new();
+    public string FlightId { get; set; }
+    public DateTime LogDate { get; set; }
+    public List<string> AppliedDiscounts { get; set; } = new();
+    public decimal TotalDiscount { get; set; }
+    public DateTime? BuyerBirthDate { get; set; }
+
+    public DiscountLog(string flightId)
+    {
+        FlightId = flightId;
+        LogDate = DateTime.Now;
+    }
 }

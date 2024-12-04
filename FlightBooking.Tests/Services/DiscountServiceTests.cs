@@ -9,122 +9,139 @@ namespace FlightBooking.Tests.Services
     [TestFixture]
     public class DiscountServiceTests
     {
-        private DiscountService? _discountService;
         private DiscountManager _discountManager;
+        private Mock<IDiscountLogger> _mockLogger;
 
         [SetUp]
         public void SetUp()
         {
-            _discountManager = new DiscountManager();
+            _mockLogger = new Mock<IDiscountLogger>();
+            _discountManager = new DiscountManager(_mockLogger.Object);
         }
 
         [Test]
         public void Should_Apply_Mocked_Discount()
         {
             // Arrange
+            var basePrice = 50m;
+            var discount = 5m;
+            var expectedFinalPrice = basePrice - discount;
+
             var mockCriteria = new Mock<IDiscountCriteria>();
-            mockCriteria.Setup(c => c.IsApplicable(It.IsAny<Flight>(), It.IsAny<DateTime>(), It.IsAny<DateTime?>()))
+            mockCriteria.Setup(c => c.IsApplicable(It.IsAny<Flight>(), It.IsAny<DateTime?>()))
                         .Returns(true);
             mockCriteria.Setup(c => c.GetDiscountAmount())
-                        .Returns(5m);
+                        .Returns(discount);
 
-            var discountManager = new DiscountManager();
-            discountManager.AddDiscountCriteria(mockCriteria.Object);
+            _discountManager.AddDiscountCriteria(mockCriteria.Object);
+            var discountService = new DiscountService(_discountManager);
 
-            var discountService = new DiscountService(discountManager);
+            var flight = CreateFlight();
+            flight.AddPrice(new FlightPrice(basePrice: basePrice) );
 
-            var basePrice = 30m;
-            var flight = new Flight("KLM12345BCA", "POL", "AFR", DateTime.Today, new[] { DayOfWeek.Thursday });
 
             // Act
-            var finalPrice = discountService.CalculateDiscountedPrice(basePrice, flight, DateTime.Today, null, TenantGroup.A);
+            var finalPrice = discountService.CalculateDiscountedPrice(flight, null, TenantGroup.A);
 
             // Assert
-            Assert.That(finalPrice, Is.EqualTo(25m), "The mocked discount was not applied correctly.");
+            Assert.That(finalPrice, Is.EqualTo(expectedFinalPrice), "The mocked discount was not applied correctly.");
         }
 
-        [TestCase(30, 20, true, true, Description = "Both discounts applied")]
-        [TestCase(30, 25, true, false, Description = "Birthday discount only")]
         [TestCase(30, 30, false, false, Description = "No discounts applied")]
+        [TestCase(30, 25, true, false, Description = "Birthday discount only")]
+        [TestCase(30, 20, true, true, Description = "Both discounts applied")]
+        [TestCase(21, 21, true, true, Description = "Both discounts applied, but final price cannot be below 20")]
+        [TestCase(26, 26, true, true, 
+            Description = "Both discounts applied, but final price cannot be below 20 - use case where I decided to not include any discounts if after all discounts price would be below 20")]
         public void Should_Apply_Discounts_Based_On_Criteria(decimal basePrice, decimal expectedPrice, bool isBirthday, bool isAfricaOnThursday)
         {
             // Arrange
-            var discountManager = new DiscountManager();
             if (isBirthday)
-                discountManager.AddDiscountCriteria(new BirthdayDiscount());
+                _discountManager.AddDiscountCriteria(new BirthdayDiscount());
             if (isAfricaOnThursday)
-                discountManager.AddDiscountCriteria(new AfricaFlightDiscount());
+                _discountManager.AddDiscountCriteria(new AfricaFlightDiscount());
 
-            var discountService = new DiscountService(discountManager);
+            var discountService = new DiscountService(_discountManager);
 
-            var flightDate = GetNextThursday(DateTime.Today);
-            var flight = new Flight("KLM12345BCA", "POL", "AFR", flightDate, new[] { DayOfWeek.Thursday });
+            var thursday = GetNextThursday(DateTime.Today);
+            // Flight to Africa (Cairo) on Thursday
+            var flight = CreateFlight(to: "CAI", departureTime: thursday);
+            flight.AddPrice(new FlightPrice(basePrice: basePrice));
+            var birthdayDate = thursday; // It turns out that it's also a birthday. This is not a DRY violation; I wanted to show a case where we have two discounts.
+            // Thursday + Africa + birthday are together by "coincidance"
 
             // Act
-            var finalPrice = discountService.CalculateDiscountedPrice(basePrice, flight, flightDate, flightDate, TenantGroup.A);
+            var finalPrice = discountService.CalculateDiscountedPrice(flight, birthdayDate, TenantGroup.A);
 
             // Assert
             Assert.That(finalPrice, Is.EqualTo(expectedPrice), $"The calculated price should be {expectedPrice}.");
         }
 
+
+
         [Test]
-        public void Should_Log_Discounts_For_Tenant_Group_A()
+        public void Should_Not_Log_Discounts_When_Disabled()
         {
             // Arrange
-            var discountManager = new DiscountManager();
-            discountManager.AddDiscountCriteria(new BirthdayDiscount());
-            discountManager.AddDiscountCriteria(new AfricaFlightDiscount());
+            var flightId = "LOG12345NOT";
+            var flight = CreateFlight(flightId: flightId);
 
-            var discountService = new DiscountService(discountManager);
+            _discountManager.AddDiscountCriteria(new BirthdayDiscount());
+            _discountManager.AddDiscountCriteria(new AfricaFlightDiscount());
 
-            var flight = new Flight("KLM12345BCA", "POL", "AFR", DateTime.Today, new[] { DayOfWeek.Thursday });
             var buyerBirthDate = DateTime.Today;
-
             // Act
-            var finalPrice = discountService.CalculateDiscountedPrice(
-                basePrice: 30m,
-                flight: flight,
-                purchaseDate: DateTime.Today,
-                buyerBirthDate: buyerBirthDate,
-                tenantGroup: TenantGroup.A
-            );
 
-            var logs = discountService.GetDiscountLogs();
+            var (totalDiscount, appliedDiscounts) = _discountManager.ApplyDiscounts(flight, buyerBirthDate, logDiscounts: false);
 
-            // Assert
-            Assert.That(logs.Count, Is.EqualTo(1));
-            Assert.That(logs[0].FlightId, Is.EqualTo("KLM12345BCA"));
+            //// Assert
+            _mockLogger.Verify(logger => logger.Log(It.IsAny<DiscountLog>()),
+                Times.Never, "Logger should not log any discount details when logging is disabled.");
         }
 
         [Test]
-        public void Should_Not_Log_Discounts_For_Tenant_Group_B()
+        public void Should_Log_Discounts_When_Enabled()
         {
             // Arrange
-            var discountManager = new DiscountManager();
-            discountManager.AddDiscountCriteria(new BirthdayDiscount());
-            discountManager.AddDiscountCriteria(new AfricaFlightDiscount());
+            var flightId = "LOG12345NOW";
+            var flight = CreateFlight(flightId: flightId);
 
-            var discountService = new DiscountService(discountManager);
+            _discountManager.AddDiscountCriteria(new BirthdayDiscount());
+            _discountManager.AddDiscountCriteria(new AfricaFlightDiscount());
 
-            var flight = new Flight("KLM12345BCA", "POL", "AFR", DateTime.Today, new[] { DayOfWeek.Thursday });
             var buyerBirthDate = DateTime.Today;
-
             // Act
-            var finalPrice = discountService.CalculateDiscountedPrice(
-                basePrice: 30m,
-                flight: flight,
-                purchaseDate: DateTime.Today,
-                buyerBirthDate: buyerBirthDate,
-                tenantGroup: TenantGroup.B
-            );
-
-            var logs = discountService.GetDiscountLogs();
+            var (totalDiscount, appliedDiscounts) = _discountManager.ApplyDiscounts(flight, buyerBirthDate, logDiscounts: true);
 
             // Assert
-            Assert.That(logs.Count, Is.EqualTo(0));
+            _mockLogger.Verify(logger => logger.Log(It.Is<DiscountLog>(log =>
+                log.FlightId == flightId &&
+                log.TotalDiscount == totalDiscount &&
+                log.AppliedDiscounts.SequenceEqual(appliedDiscounts))),
+                Times.Once, "Logger should log the discount details once.");
         }
 
-        private DateTime GetNextThursday(DateTime startDate)
+        private Flight CreateFlight(
+            string flightId = "KLM12345BCA",
+            string from = "NYC",
+            string to = "LAX",
+            DateTime departureTime = default,
+            DayOfWeek[]? daysOfWeek = null)
+        {
+
+            if (departureTime == default)
+            {
+                const int twentyDaysAhead = 20;
+                departureTime = DateTime.Today.AddDays(twentyDaysAhead);
+            }
+            daysOfWeek ??= [DayOfWeek.Monday];
+
+
+            var flight = new Flight(flightId, from, to, departureTime, daysOfWeek);
+            return flight;
+        }
+
+        private static DateTime GetNextThursday(DateTime startDate)
         {
             int daysUntilThursday = ((int)DayOfWeek.Thursday - (int)startDate.DayOfWeek + 7) % 7;
             return startDate.AddDays(daysUntilThursday);

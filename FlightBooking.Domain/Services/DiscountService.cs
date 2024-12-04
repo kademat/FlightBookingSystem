@@ -13,20 +13,25 @@ namespace FlightBooking.Domain.Services
             _discountManager = discountManager;
         }
 
-        public decimal CalculateDiscountedPrice(decimal basePrice, Flight flight, DateTime purchaseDate, DateTime? buyerBirthDate, TenantGroup tenantGroup)
+        public decimal CalculateDiscountedPrice(Flight flight, DateTime? buyerBirthDate, TenantGroup tenantGroup)
         {
             var (totalDiscount, appliedDiscounts) = _discountManager.ApplyDiscounts(
                 flight,
-                purchaseDate,
                 buyerBirthDate,
                 logDiscounts: tenantGroup == TenantGroup.A
             );
 
-            decimal discountedPrice = basePrice - totalDiscount;
+            var flightPrice = flight.GetPrice();
 
-            return discountedPrice < MinPrice ? MinPrice : discountedPrice;
+            if (!flightPrice.HasValue)
+            {
+                throw new ArgumentException($"There is no price for flight id {flight.FlightId}. Maybe there are no tickets?");
+            }
+
+            decimal discountedPrice = flightPrice.Value - totalDiscount;
+
+            // Here it's assumed that if price after all discounts is below MinPrice there are no discounts at all.
+            return discountedPrice < MinPrice ? flightPrice.Value : discountedPrice;
         }
-
-        public List<DiscountLog> GetDiscountLogs() => _discountManager.GetLogs();
     }
 }

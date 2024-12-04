@@ -3,6 +3,7 @@
 public class InMemoryFlightRepository : IFlightRepository
 {
     private readonly List<Flight> _flights = new();
+    private readonly List<FlightPrice> _flightPrices = new();
 
     public void AddFlight(Flight flight)
     {
