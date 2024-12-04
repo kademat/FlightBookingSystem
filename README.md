@@ -4,7 +4,7 @@
 **FlightBookingSystem** to implementacja modelu domenowego systemu sprzedaży biletów lotniczych zgodnego z zasadami **SOLID**. Projekt został przygotowany z myślą o umożliwieniu łatwej rozbudowy oraz testowaniu z użyciem podejścia **TDD**. Nie zawiera warstw API ani infrastruktury, zgodnie z wymaganiami zadania.
 
 System obsługuje takie funkcjonalności, jak:
-- Dodawanie lotów.
+- Dodawanie/modyfikacja/usuwanie lotów.
 - Zakup biletów na loty z dynamicznym obliczaniem ceny.
 - Zniżki na podstawie elastycznych kryteriów.
 
@@ -13,12 +13,14 @@ System obsługuje takie funkcjonalności, jak:
 ## Struktura projektu
 Projekt został podzielony na dwa główne komponenty:
 1. **FlightBooking.Domain** – implementacja logiki domenowej.
-   - **Models/** – klasy reprezentujące model domenowy (np. `Flight`, `Tenant`).
-   - **Services/** – implementacje logiki biznesowej, np. `DiscountService`.
-   - **Interfaces/** – interfejsy umożliwiające rozbudowę systemu (np. `IDiscountCriteria`).
    - **Enums/** – definicje typów wyliczeniowych, np. `TenantGroup`.
+   - **Interfaces/** – interfejsy umożliwiające rozbudowę systemu (np. `IDiscountCriteria`).
+   - **Models/** – klasy reprezentujące model domenowy (np. `Flight`).
+   - **Repositories/** – klasy reprezentujące repozytorium.
+   - **Services/** – implementacje logiki biznesowej, np. `DiscountService`.
+   - **Validators/** – walidacja danych.
 
-2. **FlightBooking.Tests** – projekt testów jednostkowych oparty na **NUnit**.
+3. **FlightBooking.Tests** – projekt testów jednostkowych oparty na **NUnit**.
    - Testy są zgodne z podejściem **TDD** i pokrywają kluczowe funkcjonalności systemu.
 
 ---
@@ -82,6 +84,7 @@ Testy zostały napisane w oparciu o NUnit i można je uruchomić za pomocą Visu
 - **Repository Pattern**: choć nie zaimplementowano infrastruktury, model domenowy jest gotowy do integracji z repozytorium danych.
 - **Strategy Pattern**: logika zniżek jest oparta na strategii, co ułatwia dodawanie nowych kryteriów.
 - **Dependency Injection (DI)**: klasy usługowe są zaprojektowane tak, aby wspierały wstrzykiwanie zależności.
+- **Factory**: np. do obsługi zniżek
 
 ---
 
@@ -106,8 +109,8 @@ Dla grupy B kryteria te nie są zapisywane.
 
 ## Jak dodać nowe kryterium zniżek?
 Dodaj nową klasę, która implementuje IDiscountCriteria.
-Zaimplementuj logikę metody IsApplicable oraz GetDiscountAmount.
-Zarejestruj nowe kryterium w odpowiedniej klasie (np. DiscountService).
+Zaimplementuj logikę metody IsApplicable, GetDiscountAmount oraz GetDescription.
+Dodaje nowe kryterium w odpowiedniej klasie (np. DiscountFactory).
 Przykład nowego kryterium:
 
 ```csharp
@@ -119,5 +122,7 @@ public class WeekendDiscount : IDiscountCriteria
     }
 
     public decimal GetDiscountAmount() => 5m;
+
+    public string GetDescription() => "Weekend discount.";
 }
 ```
